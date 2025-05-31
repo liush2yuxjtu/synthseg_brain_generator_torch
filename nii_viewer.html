@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NII.GZ 文件查看器</title>
+    
+    <!-- Papaya Viewer CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/rii-mango/Papaya@master/release/current/standard/papaya.css" />
+    
+    <!-- Papaya Viewer JS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/rii-mango/Papaya@master/release/current/standard/papaya.js"></script>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        
+        .file-input-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .papaya-container {
+            margin: 20px 0;
+        }
+        
+        .instructions {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f0f8ff;
+            border-left: 4px solid #1e90ff;
+            border-radius: 4px;
+        }
+        
+        .instructions h3 {
+            margin-top: 0;
+            color: #1e90ff;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .file-label {
+            display: inline-block;
+            background-color: #2196F3;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .file-label:hover {
+            background-color: #0b7dda;
+        }
+        
+        .file-name {
+            margin-top: 10px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>NII.GZ 文件查看器</h1>
+        
+        <div class="instructions">
+            <h3>使用说明</h3>
+            <ul>
+                <li>点击"选择NII.GZ文件"按钮上传您的.nii.gz格式的脑部图像文件</li>
+                <li>上传后，图像将自动在下方的查看器中显示</li>
+                <li>使用鼠标滚轮可以放大和缩小图像</li>
+                <li>按住鼠标左键并拖动可以平移图像</li>
+                <li>点击图像可以在不同的切片之间导航</li>
+                <li>使用查看器上方的工具栏可以调整对比度、亮度等参数</li>
+            </ul>
+        </div>
+        
+        <div class="file-input-container">
+            <label for="niiFile" class="file-label">选择NII.GZ文件</label>
+            <input type="file" id="niiFile" class="file-input" accept=".nii,.nii.gz" />
+            <div id="fileName" class="file-name"></div>
+        </div>
+        
+        <!-- Papaya容器 -->
+        <div class="papaya-container">
+            <div class="papaya" data-params="params"></div>
+        </div>
+    </div>
+    
+    <script type="text/javascript">
+        // 初始化Papaya参数
+        var params = [];
+        params["kioskMode"] = false;
+        params["allowScroll"] = true;
+        params["fullScreen"] = false;
+        
+        // 文件选择处理
+        document.getElementById('niiFile').addEventListener('change', function(e) {
+            var file = e.target.files[0];
+            if (file) {
+                document.getElementById('fileName').textContent = '已选择: ' + file.name;
+                
+                // 读取文件
+                var reader = new FileReader();
+                reader.onload = function(event) {
+                    // 清除之前的图像
+                    papaya.Container.resetViewer(0);
+                    
+                    // 加载新图像
+                    var buffer = new Uint8Array(event.target.result);
+                    papaya.Container.addImage(0, [buffer.buffer], {
+                        binaryFile: file.name
+                    });
+                };
+                reader.readAsArrayBuffer(file);
+            }
+        });
+        
+        // 保存图像到本地
+        function saveScreenshot() {
+            if (papaya.Container.hasInstance()) {
+                var canvas = papaya.Container.getViewerByIndex(0).canvas;
+                var link = document.createElement('a');
+                link.href = canvas.toDataURL('image/png');
+                link.download = 'brain_screenshot_' + new Date().getTime() + '.png';
+                link.click();
+            } else {
+                alert('请先加载一个图像文件！');
+            }
+        }
+    </script>
+</body>
+</html>

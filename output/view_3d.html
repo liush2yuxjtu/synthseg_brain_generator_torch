@@ -1,0 +1,40 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>脑部图像3D查看器</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rii-mango/Papaya@master/release/current/standard/papaya.css" />
+    <script src="https://cdn.jsdelivr.net/gh/rii-mango/Papaya@master/release/current/standard/papaya.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { color: #333; }
+        .viewer { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>生成的脑部图像3D查看器</h1>
+        <p>使用下面的查看器加载生成的.nii.gz文件进行3D查看。</p>
+        
+        <div class="viewer">
+            <div class="papaya" data-params="params"></div>
+        </div>
+        
+        <script>
+            var params = [];
+            params.kioskMode = false;
+            params.fullScreen = false;
+            params.allowScroll = true;
+            params.showControls = true;
+            params.showImageButtons = true;
+            params.showControlBar = true;
+            
+            // 初始化查看器
+            papaya.Container.startPapaya();
+        </script>
+    </div>
+</body>
+</html>
